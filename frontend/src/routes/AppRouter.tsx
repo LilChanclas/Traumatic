@@ -1,0 +1,34 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import LoginPage from '../pages/auth/LoginPage'
+import AlumnoLayout from '../layouts/AlumnoLayout'
+import AdministrativoLayout from '../layouts/AdministrativoLayout'
+import AdminLayout from '../layouts/AdminLayout'
+import AlumnoDashboardPage from '../pages/alumno/DashboardPage'
+import TramitesPage from '../pages/alumno/TramitesPage'
+
+import AdministrativoDashboardPage from '../pages/administrativo/DashboardPage'
+import AdminDashboardPage from '../pages/admin/DashboardPage'
+
+function AppRouter() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/alumno" element={<AlumnoLayout />}>
+            <Route path="dashboard" element={<AlumnoDashboardPage />} />
+            <Route path="tramites" element={<TramitesPage />} />
+        </Route>
+
+        <Route path="/administrativo" element={<AdministrativoLayout />}>
+            <Route path="dashboard" element={<AdministrativoDashboardPage />} />
+        </Route>
+        
+        <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default AppRouter
