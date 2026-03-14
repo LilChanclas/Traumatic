@@ -8,6 +8,8 @@ import TramitesPage from '../pages/alumno/TramitesPage'
 
 import AdministrativoDashboardPage from '../pages/administrativo/DashboardPage'
 import AdminDashboardPage from '../pages/admin/DashboardPage'
+import SolicitarPage from '../pages/alumno/SolicitarPage'
+import HistorialPage from '../pages/alumno/HistorialPage'
 
 function AppRouter() {
   return (
@@ -17,6 +19,8 @@ function AppRouter() {
         <Route path="/alumno" element={<AlumnoLayout />}>
             <Route path="dashboard" element={<AlumnoDashboardPage />} />
             <Route path="tramites" element={<TramitesPage />} />
+            <Route path="solicitar" element= {<SolicitarPage />} />
+            <Route path="historial" element= {<HistorialPage />} />
         </Route>
 
         <Route path="/administrativo" element={<AdministrativoLayout />}>
