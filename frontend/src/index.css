@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #1E3A5F;
+  --color-primary-hover: #2C5282;
+  --color-accent: #8B1E3F;
+  --color-text: #2D3748;
+  --color-bg: #F5F7FA;
+  --font-sans: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: #F5F7FA;
+  color: #2D3748;
+  font-family: 'Roboto', sans-serif;
+}
