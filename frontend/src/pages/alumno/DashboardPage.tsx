@@ -1,3 +1,5 @@
+import DashboardCard from "../../components/DashboardCard"
+
 // Datos mockeados
 const MOCK_TRAMITES = [
   { id: 1, tipo: 'Constancia de estudios', estado: 'Aprobado', fecha: '2026-03-01' },
@@ -40,14 +42,12 @@ export default function AlumnoDashboardPage() {
 
   return (
     <div>
+      <h2 className="text-2xl font-bold text-[#1E3A5F] mb-8">Mi Panel</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Tarjeta 1 — Últimos trámites */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h3 className="text-sm font-semibold text-[#1E3A5F] uppercase tracking-wide mb-4">
-            Últimos trámites
-          </h3>
+        <DashboardCard titulo="Últimos trámites">
           <div className="space-y-3">
             {ultimos3.map((t) => (
               <div key={t.id} className="flex items-center justify-between">
@@ -61,14 +61,11 @@ export default function AlumnoDashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
 
         {/* Tarjeta 2 — Más frecuente */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col justify-between">
-          <h3 className="text-sm font-semibold text-[#1E3A5F] uppercase tracking-wide mb-4">
-            Trámite más frecuente
-          </h3>
-          <div className="flex-1 flex flex-col justify-between">
+        <DashboardCard titulo="Trámite más frecuente">
+          <div className="flex flex-col justify-between h-full">
             <div>
               <p className="text-lg font-bold text-[#2D3748]">{masFrecuente.tipo}</p>
               <p className="text-xs text-gray-400 mt-1">
@@ -85,13 +82,10 @@ export default function AlumnoDashboardPage() {
               Solicitar de nuevo
             </button>
           </div>
-        </div>
+        </DashboardCard>
 
         {/* Tarjeta 3 — En proceso */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h3 className="text-sm font-semibold text-[#1E3A5F] uppercase tracking-wide mb-4">
-            En proceso
-          </h3>
+        <DashboardCard titulo="En proceso">
           {enProceso.length === 0 ? (
             <p className="text-sm text-gray-400">No tienes trámites en proceso.</p>
           ) : (
@@ -109,7 +103,7 @@ export default function AlumnoDashboardPage() {
               ))}
             </div>
           )}
-        </div>
+        </DashboardCard>
 
       </div>
     </div>

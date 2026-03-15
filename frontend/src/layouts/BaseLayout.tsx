@@ -13,7 +13,7 @@ interface NavItem {
     path: string
     icon: IconType
 }
-
+//Datos que tiene que recibir el baselayout
 interface Props {
     navItems: NavItem[]
     user: {

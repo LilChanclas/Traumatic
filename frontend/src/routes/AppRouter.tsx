@@ -1,15 +1,21 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import LoginPage from '../pages/auth/LoginPage'
+
 import AlumnoLayout from '../layouts/AlumnoLayout'
 import AdministrativoLayout from '../layouts/AdministrativoLayout'
 import AdminLayout from '../layouts/AdminLayout'
+
 import AlumnoDashboardPage from '../pages/alumno/DashboardPage'
 import TramitesPage from '../pages/alumno/TramitesPage'
-
-import AdministrativoDashboardPage from '../pages/administrativo/DashboardPage'
-import AdminDashboardPage from '../pages/admin/DashboardPage'
 import SolicitarPage from '../pages/alumno/SolicitarPage'
 import HistorialPage from '../pages/alumno/HistorialPage'
+
+import AdministrativoDashboardPage from '../pages/administrativo/DashboardPage'
+import ReportesPage from '../pages/administrativo/ReportesPage'
+import BandejaEntradaPage from '../pages/administrativo/BandejaEntradaPage'
+
+import AdminDashboardPage from '../pages/admin/DashboardPage'
+
 
 function AppRouter() {
   return (
@@ -25,6 +31,8 @@ function AppRouter() {
 
         <Route path="/administrativo" element={<AdministrativoLayout />}>
             <Route path="dashboard" element={<AdministrativoDashboardPage />} />
+            <Route path="bandeja-de-entrada" element={<BandejaEntradaPage/>} />
+            <Route path="reportes" element={<ReportesPage/>} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
