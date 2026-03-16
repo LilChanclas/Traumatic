@@ -101,33 +101,30 @@ export default function SolicitarPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto px-2 sm:px-0">
       <h2 className="text-2xl font-bold text-primary mb-8">Solicitar Trámite</h2>
 
       {/* Stepper */}
-      <div className="flex items-center mb-10">
+      <div className="flex items-start sm:items-center mb-10 overflow-x-auto pb-2">
         {PASOS.map((paso, i) => (
           <div key={paso} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center">
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition ${
-                i < pasoActual
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition ${i < pasoActual
                   ? 'bg-primary text-white'
                   : i === pasoActual
-                  ? 'bg-primary text-white ring-4 ring-primary/20'  
-                  : 'bg-gray-200 text-gray-400'
-              }`}>
+                    ? 'bg-primary text-white ring-4 ring-primary/20'
+                    : 'bg-gray-200 text-gray-400'
+                }`}>
                 {i < pasoActual ? '✓' : i + 1}
               </div>
-              <span className={`text-xs mt-1 font-medium ${
-                i === pasoActual ? 'text-primary' : 'text-gray-400'
-              }`}>
+              <span className={`text-xs mt-1 font-medium ${i === pasoActual ? 'text-primary' : 'text-gray-400'
+                }`}>
                 {paso}
               </span>
             </div>
             {i < PASOS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-2 mb-4 ${
-                i < pasoActual ? 'bg-primary' : 'bg-gray-200'
-              }`} />
+              <div className={`flex-1 h-0.5 mx-2 mb-4 ${i < pasoActual ? 'bg-primary' : 'bg-gray-200'
+                }`} />
             )}
           </div>
         ))}

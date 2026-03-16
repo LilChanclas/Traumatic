@@ -20,7 +20,7 @@ export default function TramitesPage() {
     <div>
       <h2 className="text-2xl font-bold text-primary mb-8">Mis Trámites</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {COLUMNAS.map((col) => {
           const tramites = MOCK_TRAMITES.filter((t) => t.estado === col.estado)
           return (
@@ -30,9 +30,6 @@ export default function TramitesPage() {
               <div className="flex items-center justify-between">
                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${col.estilo}`}>
                   {col.estado}
-                </span>
-                <span className="text-xs font-medium text-gray-400">
-                  {tramites.length} trámite{tramites.length !== 1 ? 's' : ''}
                 </span>
               </div>
 
