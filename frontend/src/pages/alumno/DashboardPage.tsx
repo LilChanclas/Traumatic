@@ -13,7 +13,7 @@ const ESTADO_STYLES: Record<string, string> = {
   'Aprobado': 'bg-green-100 text-green-700',
   'En revisión': 'bg-yellow-100 text-yellow-700',
   'Enviado': 'bg-blue-100 text-blue-700',
-  'Rechazado': 'bg-[#8B1E3F]/10 text-[#8B1E3F]',
+  'Rechazado': 'bg-accent/10 text-accent',
 }
 
 function getUltimos3() {
@@ -42,7 +42,7 @@ export default function AlumnoDashboardPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#1E3A5F] mb-8">Mi Panel</h2>
+      <h2 className="text-2xl font-bold text-primary mb-8">Mi Panel</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -52,7 +52,7 @@ export default function AlumnoDashboardPage() {
             {ultimos3.map((t) => (
               <div key={t.id} className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#2D3748]">{t.tipo}</p>
+                  <p className="text-sm font-medium text-text">{t.tipo}</p>
                   <p className="text-xs text-gray-400">{t.fecha}</p>
                 </div>
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${ESTADO_STYLES[t.estado]}`}>
@@ -67,7 +67,7 @@ export default function AlumnoDashboardPage() {
         <DashboardCard titulo="Trámite más frecuente">
           <div className="flex flex-col justify-between h-full">
             <div>
-              <p className="text-lg font-bold text-[#2D3748]">{masFrecuente.tipo}</p>
+              <p className="text-lg font-bold text-text">{masFrecuente.tipo}</p>
               <p className="text-xs text-gray-400 mt-1">
                 Última vez: {MOCK_TRAMITES.filter(t => t.tipo === masFrecuente.tipo).at(-1)?.fecha}
               </p>
@@ -77,7 +77,7 @@ export default function AlumnoDashboardPage() {
             </div>
             <button
               onClick={() => { }}
-              className="mt-6 w-full py-2.5 bg-[#1E3A5F] hover:bg-[#2C5282] text-white text-sm font-medium rounded-lg transition"
+              className="mt-6 w-full py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition"
             >
               Solicitar de nuevo
             </button>
@@ -93,7 +93,7 @@ export default function AlumnoDashboardPage() {
               {enProceso.map((t) => (
                 <div key={t.id} className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-[#2D3748]">{t.tipo}</p>
+                    <p className="text-sm font-medium text-text">{t.tipo}</p>
                     <p className="text-xs text-gray-400">{t.fecha}</p>
                   </div>
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${ESTADO_STYLES[t.estado]}`}>

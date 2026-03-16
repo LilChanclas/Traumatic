@@ -1,3 +1,3 @@
 export default function HistorialPage() {
-  return <div>Trámites</div>
+  return <div>Historial</div>
 }

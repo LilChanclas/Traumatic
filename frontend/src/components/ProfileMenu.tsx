@@ -41,7 +41,7 @@ export default function ProfileMenu({ name, rol, iniciales }: Props) {
       {/* Bolita del perfil */}
       <button
         onClick={() => setOpen(!open)}
-        className="h-9 w-9 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white text-sm font-semibold hover:bg-[#2C5282] transition"
+        className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold hover:bg-primary-hover transition"
       >
         {iniciales}
       </button>
@@ -52,20 +52,20 @@ export default function ProfileMenu({ name, rol, iniciales }: Props) {
 
           {/* Info del usuario */}
           <div className="px-4 py-2 border-b border-gray-100 mb-1">
-            <p className="text-sm font-medium text-[#2D3748]">{name}</p>
+            <p className="text-sm font-medium text-text">{name}</p>
             <p className="text-xs text-gray-400">{rol}</p>
           </div>
 
           {/* Opciones */}
           <button
             onClick={handleChangePassword}
-            className="w-full text-left px-4 py-2 text-sm text-[#2D3748] hover:bg-[#F5F7FA] transition"
+            className="w-full text-left px-4 py-2 text-sm text-text hover:bg-surface transition"
           >
             Cambiar contraseña
           </button>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-[#8B1E3F] hover:bg-[#F5F7FA] transition"
+            className="w-full text-left px-4 py-2 text-sm text-accent hover:bg-surface transition"
           >
             Cerrar sesión
           </button>

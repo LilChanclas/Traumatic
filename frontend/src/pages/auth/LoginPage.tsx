@@ -38,7 +38,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
+      <div className="min-h-screen flex items-center justify-center bg-surface">
         <div className="bg-white rounded-2xl shadow-md w-full max-w-md px-10 py-12">
 
           {/* Logo / Título */}
@@ -48,14 +48,14 @@ export default function LoginPage() {
               alt="Traumatic"
               className="h-64 mx-auto mb-4"
             />
-            <h1 className="text-3xl font-bold text-[#8B1E3F]">Traumatic</h1>
+            <h1 className="text-3xl font-bold text-accent">Traumatic</h1>
             <p className="text-sm text-gray-600 mt-1">Sistema de Gestión de Trámites Escolares</p>
           </div>
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#2D3748] mb-1">
+              <label className="block text-sm font-medium text-text mb-1">
                 Correo electrónico
               </label>
               <input
@@ -63,12 +63,12 @@ export default function LoginPage() {
                 placeholder="ejemplo@uas.edu.mx"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-[#F5F7FA] text-[#2D3748] text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A5F] transition"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#2D3748] mb-1">
+              <label className="block text-sm font-medium text-text mb-1">
                 Contraseña
               </label>
               <input
@@ -76,13 +76,13 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-[#F5F7FA] text-[#2D3748] text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A5F] transition"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#1E3A5F] hover:bg-[#2C5282] text-white text-sm font-medium rounded-lg transition"
+              className="w-full py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition"
             >
               Iniciar sesión
             </button>

@@ -34,10 +34,10 @@ export default function BaseLayout({ navItems, user }: Props) {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#F5F7FA]">
+        <div className="flex min-h-screen bg-surface">
 
             {/* Sidebar */}
-            <aside className="w-64 bg-[#1E3A5F] flex flex-col justify-between py-8 px-6 fixed h-full">
+            <aside className="w-64 bg-primary flex flex-col justify-between py-8 px-6 fixed h-full">
                 <div>
 
                     {/* Logo */}
@@ -56,7 +56,7 @@ export default function BaseLayout({ navItems, user }: Props) {
                                     to={item.path}
                                     className={({ isActive }) =>
                                         `flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all font-medium ${isActive
-                                            ? 'bg-white text-[#1E3A5F] shadow-sm'
+                                            ? 'bg-white text-primary shadow-sm'
                                             : 'text-white/80 hover:bg-white/10 hover:text-white'
                                         }`
                                     }
@@ -88,7 +88,7 @@ export default function BaseLayout({ navItems, user }: Props) {
                 <header className="h-16 bg-white shadow-sm flex items-center justify-between px-8 sticky top-0 z-10">
 
                     {/* Bienvenida */}
-                    <h1 className="text-lg font-semibold text-[#2D3748]">
+                    <h1 className="text-lg font-semibold text-text">
                         Bienvenido, {user.name}
                     </h1>
 
