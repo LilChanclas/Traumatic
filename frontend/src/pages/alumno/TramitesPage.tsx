@@ -17,8 +17,14 @@ const COLUMNAS = [
 
 export default function TramitesPage() {
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-primary mb-8">Mis Trámites</h2>
+    <div className="space-y-6">
+      {/* Encabezado */}
+      <div>
+        <h2 className="text-2xl font-semibold text-primary">Mis Trámites</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Resumen de tus trámites
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {COLUMNAS.map((col) => {
@@ -27,9 +33,12 @@ export default function TramitesPage() {
             <div key={col.estado} className={`rounded-2xl p-6 flex flex-col gap-3 ${col.card}`}>
 
               {/* Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-1">
                 <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${col.estilo}`}>
                   {col.estado}
+                </span>
+                <span className="text-xs font-semibold text-gray-400 bg-white border border-gray-100 rounded-md px-2 py-0.5">
+                  {tramites.length}
                 </span>
               </div>
 
@@ -40,7 +49,7 @@ export default function TramitesPage() {
                 </div>
               ) : (
                 tramites.map((t) => (
-                  <div key={t.id} className="bg-white rounded-xl shadow-sm p-4 space-y-1.5">
+                  <div key={t.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-1.5 hover:shadow-md transition-shadow">
                     <p className="text-sm font-medium text-text">{t.tipo}</p>
                     <p className="text-xs text-gray-400">Folio: {t.folio}</p>
                     <p className="text-xs text-gray-400">{t.fecha}</p>

@@ -44,12 +44,12 @@ export default function LoginPage() {
           {/* Logo / Título */}
           <div className="mb-10 text-center">
             <img
-              src="/Logo.png"
+              src="/traumatic_logo.png"
               alt="Traumatic"
               className="h-64 mx-auto mb-4"
             />
-            <h1 className="text-3xl font-bold text-accent">Traumatic</h1>
-            <p className="text-sm text-gray-600 mt-1">Sistema de Gestión de Trámites Escolares</p>
+            {/* <h1 className="text-3xl font-bold text-accent">Traumatic</h1>
+            <p className="text-sm text-gray-600 mt-1">Sistema de Gestión de Trámites Escolares</p> */}
           </div>
 
           {/* Formulario */}

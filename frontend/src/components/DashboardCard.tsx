@@ -7,7 +7,7 @@ interface Props {
 
 export default function DashboardCard({ titulo, headerContent, children }: Props) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col">
+    <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col border-gray-100 hover:shadow-md transition-shadow">
       {headerContent ? (
         <div className="mb-4">{headerContent}</div>
       ) : (
