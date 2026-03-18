@@ -10,10 +10,10 @@ const MOCK_TRAMITES = [
 ]
 
 const ESTADO_STYLES: Record<string, string> = {
-  'Aprobado': 'bg-green-100 text-green-700',
-  'En revisión': 'bg-yellow-100 text-yellow-700',
-  'Enviado': 'bg-blue-100 text-blue-700',
-  'Rechazado': 'bg-accent/10 text-accent',
+  'Aprobado':    'bg-green-50 text-green-700',
+  'En revisión': 'bg-yellow-50 text-yellow-700',
+  'Enviado':     'bg-blue-50 text-blue-700',
+  'Rechazado':   'bg-rose-50 text-rose-700',
 }
 
 function getUltimos3() {
@@ -41,21 +41,28 @@ export default function AlumnoDashboardPage() {
   const enProceso = getEnProceso()
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-primary mb-8">Mi Panel</h2>
+    <div className="space-y-6">
+
+      {/* Encabezado */}
+      <div>
+        <h2 className="text-2xl font-semibold text-primary">Mi Panel</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Resumen rápido de tus trámites recientes
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Tarjeta 1 — Últimos trámites */}
         <DashboardCard titulo="Últimos trámites">
-          <div className="space-y-3">
+          <div className="divide-y divide-gray-100" >
             {ultimos3.map((t) => (
-              <div key={t.id} className="flex items-center justify-between">
+              <div key={t.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                 <div>
                   <p className="text-sm font-medium text-text">{t.tipo}</p>
-                  <p className="text-xs text-gray-400">{t.fecha}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{t.fecha}</p>
                 </div>
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${ESTADO_STYLES[t.estado]}`}>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${ESTADO_STYLES[t.estado]}`}>
                   {t.estado}
                 </span>
               </div>
@@ -67,8 +74,8 @@ export default function AlumnoDashboardPage() {
         <DashboardCard titulo="Trámite más frecuente">
           <div className="flex flex-col justify-between h-full">
             <div>
-              <p className="text-lg font-bold text-text">{masFrecuente.tipo}</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-lg font-bold text-text leading-snug">{masFrecuente.tipo}</p>
+              <p className="text-xs text-gray-400 mt-2">
                 Última vez: {MOCK_TRAMITES.filter(t => t.tipo === masFrecuente.tipo).at(-1)?.fecha}
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
@@ -89,14 +96,14 @@ export default function AlumnoDashboardPage() {
           {enProceso.length === 0 ? (
             <p className="text-sm text-gray-400">No tienes trámites en proceso.</p>
           ) : (
-            <div className="space-y-3">
+            <div className="divide-y divide-gray-100">
               {enProceso.map((t) => (
-                <div key={t.id} className="flex items-center justify-between">
+                <div key={t.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                   <div>
                     <p className="text-sm font-medium text-text">{t.tipo}</p>
-                    <p className="text-xs text-gray-400">{t.fecha}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{t.fecha}</p>
                   </div>
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${ESTADO_STYLES[t.estado]}`}>
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${ESTADO_STYLES[t.estado]}`}>
                     {t.estado}
                   </span>
                 </div>

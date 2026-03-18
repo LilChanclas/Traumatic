@@ -35,118 +35,149 @@ export default function BaseLayout({ navItems, user }: Props) {
     }
 
     const sidebarContent = (
-        <>
-            {/* Logo */}
+        <div className="flex flex-col justify-between h-full">
+
+            {/* TOP */}
             <div>
-                <div className="mb-10 text-center bg-white rounded-xl p-4 shadow-md">
-                    <img src="/Logo.png" alt="Traumatic" className="h-20 mx-auto mb-2" />
-                    <p className="text-black text-sm font-bold tracking-wide">Trámites Escolares</p>
+
+            {/* Logo */}
+            <div className="mb-8 px-2">
+                <img
+                src="/traumatic_chiquito.png"
+                alt="Traumatic"
+                className="w-42 object-contain opacity-90"
+                />
+            </div>
+
+            {/* Label */}
+            <p className="text-white/30 text-[10px] font-medium tracking-[2px] uppercase px-2 mb-3">
+                Principal
+            </p>
+
+            {/* Navegación */}
+            <nav className="space-y-2">
+                {navItems.map((item) => {
+                const Icon = item.icon
+
+                return (
+                    <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                        `group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        isActive
+                            ? 'bg-white/15 text-white shadow-md ring-1 ring-white/20'
+                            : 'text-white/60 hover:bg-white/10 hover:text-white hover:translate-x-1'
+                        }`
+                    }
+                    >
+                    {({ isActive }) => (
+                        <>
+                        <Icon
+                            size={18}
+                            className="opacity-80 transition-transform group-hover:scale-105"
+                        />
+
+                        <span className="flex-1">{item.label}</span>
+
+                        {isActive && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                        )}
+                        </>
+                    )}
+                    </NavLink>
+                )
+                })}
+            </nav>
+            </div>
+
+            {/* BOTTOM */}
+            <div className="pt-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-4" />
+
+            <button
+                onClick={handleLogout}
+                className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-white/50 hover:text-white transition-all duration-200 hover:bg-white/10"
+            >
+                <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition">
+                <FiLogOut size={16} />
                 </div>
 
-                {/* Navegación */}
-                <nav className="space-y-2">
-                    {navItems.map((item) => {
-                        const Icon = item.icon
-                        return (
-                            <NavLink
-                                key={item.path}
-                                to={item.path}
-                                onClick={() => setSidebarOpen(false)}
-                                className={({ isActive }) =>
-                                    `flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all font-medium ${isActive
-                                        ? 'bg-white text-primary shadow-sm'
-                                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                                    }`
-                                }
-                            >
-                                <Icon size={18} />
-                                {item.label}
-                            </NavLink>
-                        )
-                    })}
-                </nav>
-            </div>
+                <span className="flex-1">Cerrar sesión</span>
 
-            {/* Parte inferior */}
-            <div className="space-y-2">
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 w-full text-white/70 hover:text-white text-sm px-4 py-3 rounded-lg hover:bg-white/10 transition"
-                >
-                    <FiLogOut size={18} />
-                    Cerrar sesión
-                </button>
+                <span className="text-[10px] opacity-0 group-hover:opacity-100 transition">
+                →
+                </span>
+            </button>
             </div>
-        </>
+        </div>
     )
 
     return (
-        <div className="flex min-h-screen bg-surface">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
 
-            {/* Sidebar desktop */}
-            <aside className="hidden lg:flex w-64 bg-primary flex-col justify-between py-8 px-6 fixed h-full z-20">
-                {sidebarContent}
-            </aside>
+        {/* Sidebar desktop */}
+        <aside className="hidden lg:flex w-60 bg-gradient-to-b from-primary to-primary/90 flex-col py-6 px-4 fixed h-full z-20 shadow-xl">
+        {sidebarContent}
+        </aside>
 
-            {/* Overlay móvil */}
-            {sidebarOpen && (
-                <div
-                    className="fixed inset-0 bg-black/40 z-20 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
+        {/* Overlay móvil */}
+        {sidebarOpen && (
+        <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-20 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+        />
+        )}
 
-            {/* Sidebar móvil */}
-            <aside className={`fixed top-0 left-0 h-full w-64 bg-primary flex flex-col justify-between py-8 px-6 z-30 transform transition-transform duration-300 lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                }`}>
-                {/* Botón cerrar */}
-                <button
-                    onClick={() => setSidebarOpen(false)}
-                    className="absolute top-4 right-4 text-white/70 hover:text-white"
-                >
-                    <FiX size={20} />
-                </button>
-                {sidebarContent}
-            </aside>
+        {/* Sidebar móvil */}
+        <aside
+        className={`fixed top-0 left-0 h-full w-60 bg-gradient-to-b from-primary to-primary/90 flex flex-col py-6 px-4 z-30 transform transition-transform duration-300 lg:hidden ${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        >
+        <button
+            onClick={() => setSidebarOpen(false)}
+            className="absolute top-4 right-4 text-white/70 hover:text-white transition"
+        >
+            <FiX size={20} />
+        </button>
 
-            {/* Contenido principal */}
-            <div className="lg:ml-64 flex-1 flex flex-col w-full">
+        {sidebarContent}
+        </aside>
 
-                {/* Navbar superior */}
-                <header className="h-16 bg-white shadow-sm flex items-center justify-between px-6 sticky top-0 z-10">
-                    {/* Bienvenida */}
-                    <h1 className="text-xl font-semibold text-primary">
-                        Bienvenido, {user.name}
-                    </h1>
+        {/* Contenido principal */}
+        <div className="lg:ml-60 flex-1 flex flex-col w-full">
 
-                    {/* Botón hamburguesa — solo móvil */}
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden text-primary hover:text-primary-hover transition"
-                    >
-                        <FiMenu size={22} />
-                    </button>
+        {/* Navbar */}
+        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-10">
 
-                    {/* Spacer desktop */}
-                    <div className="hidden lg:block" />
+            <div className="flex items-center gap-3">
+            <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden text-primary"
+            >
+                <FiMenu size={22} />
+            </button>
 
-                    {/* Perfil */}
-                    <div className="flex items-center gap-3">
-                        <ProfileMenu
-                            name={user.name}
-                            rol={user.rol}
-                            iniciales={user.iniciales}
-                        />
-                    </div>
-                </header>
-
-                {/* Página actual */}
-                <main className="flex-1 p-4 lg:p-10">
-                    <Outlet />
-                </main>
-
+            <h1 className="text-lg font-semibold text-gray-800">
+                Bienvenido, {user.name}
+            </h1>
             </div>
 
+            <ProfileMenu
+            name={user.name}
+            rol={user.rol}
+            iniciales={user.iniciales}
+            />
+        </header>
+
+        {/* Main */}
+        <main className="flex-1 p-4 lg:p-6">
+            <Outlet />
+        </main>
+
         </div>
+    </div>
     )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import DashboardCard from '../../components/DashboardCard'
+import { FiChevronDown, FiCheck } from 'react-icons/fi'
 
 // Definición de trámites con sus campos y documentos
 const TRAMITES = [
@@ -63,19 +64,25 @@ const TRAMITES = [
   },
 ]
 
-const PASOS = ['Tipo de trámite', 'Datos', 'Documentos', 'Confirmar']
+const PASOS = ['Tipo', 'Datos', 'Documentos', 'Confirmar']
+
+const inputClass = `
+  w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface text-text text-sm
+  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+  transition placeholder-gray-300
+`
 
 export default function SolicitarPage() {
   const [pasoActual, setPasoActual] = useState(0)
   const [tramiteId, setTramiteId] = useState('')
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [archivos, setArchivos] = useState<File[]>([])
+  const [open, setOpen] = useState(false)
 
   const tramiteSeleccionado = TRAMITES.find((t) => t.id === tramiteId)
 
   function handleSiguiente() {
     if (pasoActual === 0 && !tramiteId) return
-    // Saltar paso de documentos si el trámite no los requiere
     if (pasoActual === 1 && tramiteSeleccionado?.documentos.length === 0) {
       setPasoActual(3)
       return
@@ -97,34 +104,36 @@ export default function SolicitarPage() {
 
   function handleSubmit() {
     console.log('Solicitud enviada:', { tramiteId, formData, archivos })
-    // Aquí irá la llamada al backend después
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-2 sm:px-0">
-      <h2 className="text-2xl font-bold text-primary mb-8">Solicitar Trámite</h2>
+    <div className="max-w-4xl mx-auto px-2 sm:px-0">
+      <h2 className="text-2xl font-semibold text-primary mb-8">Solicitar Trámite</h2>
 
       {/* Stepper */}
-      <div className="flex items-start sm:items-center mb-10 overflow-x-auto pb-2">
+      <div className="flex items-center gap-4 mb-6">
         {PASOS.map((paso, i) => (
           <div key={paso} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center">
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition ${i < pasoActual
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+                i < pasoActual
                   ? 'bg-primary text-white'
                   : i === pasoActual
-                    ? 'bg-primary text-white ring-4 ring-primary/20'
-                    : 'bg-gray-200 text-gray-400'
-                }`}>
-                {i < pasoActual ? '✓' : i + 1}
+                    ? 'bg-primary text-white ring-4 ring-primary/15'
+                    : 'bg-gray-100 text-gray-400'
+              }`}>
+                {i < pasoActual ? <FiCheck size={14} strokeWidth={3} /> : i + 1}
               </div>
-              <span className={`text-xs mt-1 font-medium ${i === pasoActual ? 'text-primary' : 'text-gray-400'
-                }`}>
+              <span className={`text-xs mt-1.5 font-medium whitespace-nowrap ${
+                i === pasoActual ? 'text-primary' : i < pasoActual ? 'text-primary/60' : 'text-gray-400'
+              }`}>
                 {paso}
               </span>
             </div>
             {i < PASOS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-2 mb-4 ${i < pasoActual ? 'bg-primary' : 'bg-gray-200'
-                }`} />
+              <div className={`flex-1 h-0.5 mx-2 mb-5 rounded-full transition-all ${
+                i < pasoActual ? 'bg-primary' : 'bg-gray-200'
+              }`} />
             )}
           </div>
         ))}
@@ -134,20 +143,56 @@ export default function SolicitarPage() {
 
         {/* Paso 1 — Elegir tipo */}
         {pasoActual === 0 && (
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-text mb-1">
-              Tipo de trámite
-            </label>
-            <select
-              value={tramiteId}
-              onChange={(e) => setTramiteId(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
-            >
-              <option value="">Selecciona un trámite...</option>
-              {TRAMITES.map((t) => (
-                <option key={t.id} value={t.id}>{t.label}</option>
-              ))}
-            </select>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-text mb-1.5">
+                Tipo de trámite
+              </label>
+
+              {/* Select personalizado */}
+              <div className="relative">
+                <button
+                  onClick={() => setOpen((o) => !o)}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/70 backdrop-blur border border-gray-200 text-sm text-gray-700 hover:border-gray-300 transition"
+                >
+                  <span className={tramiteId ? 'text-gray-800' : 'text-gray-400'}>
+                    {tramiteSeleccionado?.label || 'Selecciona un trámite...'}
+                  </span>
+
+                  <FiChevronDown
+                    className={`transition ${open ? 'rotate-180' : ''}`}
+                    size={16}
+                  />
+                </button>
+
+                {open && (
+                  <div className="absolute mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
+
+                    {TRAMITES.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => {
+                          setTramiteId(t.id)
+                          setOpen(false)
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition flex items-center justify-between ${
+                          tramiteId === t.id ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                        }`}
+                      >
+                        {t.label}
+
+                        {tramiteId === t.id && (
+                          <FiCheck size={14} />
+                        )}
+                      </button>
+                    ))}
+
+                  </div>
+                )}
+              </div>
+            </div>
+
+
           </div>
         )}
 
@@ -156,7 +201,7 @@ export default function SolicitarPage() {
           <div className="space-y-4">
             {tramiteSeleccionado.campos.map((campo) => (
               <div key={campo.id}>
-                <label className="block text-sm font-medium text-text mb-1">
+                <label className="block text-sm font-medium text-text mb-1.5">
                   {campo.label}
                 </label>
                 {campo.tipo === 'textarea' ? (
@@ -165,7 +210,7 @@ export default function SolicitarPage() {
                     placeholder={campo.placeholder}
                     value={formData[campo.id] || ''}
                     onChange={(e) => handleCampo(campo.id, e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition resize-none"
+                    className={`${inputClass} resize-none`}
                   />
                 ) : (
                   <input
@@ -173,7 +218,7 @@ export default function SolicitarPage() {
                     placeholder={campo.placeholder}
                     value={formData[campo.id] || ''}
                     onChange={(e) => handleCampo(campo.id, e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
+                    className={inputClass}
                   />
                 )}
               </div>
@@ -183,23 +228,31 @@ export default function SolicitarPage() {
 
         {/* Paso 3 — Documentos */}
         {pasoActual === 2 && tramiteSeleccionado && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {tramiteSeleccionado.documentos.map((doc) => (
               <div key={doc}>
-                <label className="block text-sm font-medium text-text mb-1">
+                <label className="block text-sm font-medium text-text mb-1.5">
                   {doc}
                 </label>
-                <input
-                  type="file"
-                  accept=".pdf,image/*"
-                  onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      setArchivos([e.target.files[0]])
-                    }
-                  }}
-                  className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-sm file:font-medium hover:file:bg-[#2C5282] transition"
-                />
-                <p className="text-xs text-gray-400 mt-1">PDF o imagen, máx. 5MB</p>
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-surface hover:border-primary/40 hover:bg-primary/5 transition group">
+                  <div className="flex flex-col items-center gap-1 text-gray-400 group-hover:text-primary transition">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <span className="text-sm font-medium">
+                      {archivos.length > 0 ? archivos[0].name : 'Haz clic o arrastra el archivo aquí'}
+                    </span>
+                    <span className="text-xs">PDF o imagen, máx. 5MB</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".pdf,image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) setArchivos([e.target.files[0]])
+                    }}
+                  />
+                </label>
               </div>
             ))}
           </div>
@@ -208,21 +261,23 @@ export default function SolicitarPage() {
         {/* Paso 4 — Confirmar */}
         {pasoActual === 3 && tramiteSeleccionado && (
           <div className="space-y-3">
-            <div className="bg-surface rounded-lg p-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-700">Tipo de trámite</span>
+            <div className="bg-surface rounded-xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
+              <div className="flex justify-between px-4 py-3">
+                <span className="text-sm text-gray-500">Tipo de trámite</span>
                 <span className="text-sm font-medium text-text">{tramiteSeleccionado.label}</span>
               </div>
               {tramiteSeleccionado.campos.map((campo) => (
-                <div key={campo.id} className="flex justify-between">
-                  <span className="text-sm text-gray-700">{campo.label}</span>
-                  <span className="text-sm font-medium text-text">{formData[campo.id] || '—'}</span>
+                <div key={campo.id} className="flex justify-between px-4 py-3">
+                  <span className="text-sm text-gray-500">{campo.label}</span>
+                  <span className="text-sm font-medium text-text text-right max-w-[60%] truncate">
+                    {formData[campo.id] || '—'}
+                  </span>
                 </div>
               ))}
               {archivos.length > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-700">Documento adjunto</span>
-                  <span className="text-sm font-medium text-text">{archivos[0].name}</span>
+                <div className="flex justify-between px-4 py-3">
+                  <span className="text-sm text-gray-500">Documento adjunto</span>
+                  <span className="text-sm font-medium text-text truncate max-w-[60%]">{archivos[0].name}</span>
                 </div>
               )}
             </div>
@@ -230,28 +285,28 @@ export default function SolicitarPage() {
         )}
 
         {/* Botones de navegación */}
-        <div className="flex justify-between mt-8">
-          {pasoActual > 0 ? (
+        <div className={`flex mt-8 pt-5 border-t border-gray-100 ${pasoActual > 0 ? 'justify-between' : 'justify-end'}`}>
+          {pasoActual > 0 && (
             <button
               onClick={handleAtras}
-              className="px-6 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-text hover:bg-surface transition"
+              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-text hover:bg-surface transition"
             >
-              Atrás
+              ← Atrás
             </button>
-          ) : <div />}
+          )}
 
           {pasoActual < 3 ? (
             <button
               onClick={handleSiguiente}
               disabled={pasoActual === 0 && !tramiteId}
-              className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Siguiente
+              Siguiente →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition"
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition"
             >
               Enviar solicitud
             </button>
