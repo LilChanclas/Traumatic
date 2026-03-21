@@ -8,6 +8,7 @@ import type { IconType } from 'react-icons'
 import { FiLogOut, FiMenu, FiX } from 'react-icons/fi'
 import ProfileMenu from '../components/ProfileMenu'
 import toast from 'react-hot-toast'
+import { logout } from '@/lib/auth'
 
 interface NavItem {
     label: string
@@ -30,6 +31,7 @@ export default function BaseLayout({ navItems, user }: Props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     function handleLogout() {
+        logout()
         toast.success('Sesión cerrada correctamente')
         setTimeout(() => navigate('/'), 1000)
     }
