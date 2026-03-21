@@ -1,95 +1,117 @@
-import { useState } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
+import { FaMicrosoft } from "react-icons/fa"
+import { loginWithGoogle } from "@/lib/auth"
 
-//Usuarios mockeados para simular login
-const MOCK_USERS = [
-  { email: 'alumno@uas.edu.mx', password: '123456', role: 'alumno' },
-  { email: 'administrativo@uas.edu.mx', password: '123456', role: 'administrativo' },
-  { email: 'admin@uas.edu.mx', password: '123456', role: 'admin' },
-]
+declare global {
+  interface Window {
+    google: any
+  }
+}
 
 export default function LoginPage() {
-
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+ useEffect(() => {
+  const initGoogle = () => {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+    })
 
-    const user = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
+    window.google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      {
+        theme: "outline",
+        size: "large",
+        width: 400,
+      }
     )
+  }
 
-    if (!user) {
-      toast.error('Correo o contraseña incorrectos.')
+    // Si ya cargó, inicializa directo
+    if (window.google) {
+      initGoogle()
       return
     }
 
-    toast.success(`Bienvenido, ${user.role}`)
+    // Si no, espera a que el script termine de cargar
+    const script = document.querySelector('script[src*="accounts.google.com/gsi/client"]')
+    if (script) {
+      script.addEventListener("load", initGoogle)
+      return () => script.removeEventListener("load", initGoogle)
+    }
+  }, [])
 
-    setTimeout(() => {
-      if (user.role === 'alumno') navigate('/alumno/dashboard')
-      if (user.role === 'administrativo') navigate('/administrativo/dashboard')
-      if (user.role === 'admin') navigate('/admin/dashboard')
-    }, 1000)
+  async function handleCredentialResponse(response: any) {
+    try {
+      const usuario = await loginWithGoogle(response.credential)
+      toast.success('Bienvenido')
+
+      if (usuario.rol === 'ALUMNO') navigate('/alumno/dashboard')
+      else if (usuario.rol === 'ADMINISTRATIVO') navigate('/administrativo/dashboard')
+      else navigate('/alumno/dashboard')
+
+    } catch {
+      toast.error('Error al iniciar sesión')
+    }
+  }
+
+  // Microsoft login (OAuth redirect)
+  function handleMicrosoftLogin() {
+    const clientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID
+    const redirectUri = "http://localhost:5173/auth/microsoft/callback"
+
+    const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&response_mode=query&scope=openid profile email`
+
+    window.location.href = url
   }
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="bg-white rounded-2xl shadow-md w-full max-w-md px-10 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="bg-white rounded-2xl shadow-md w-full max-w-md px-8 py-10">
 
-          {/* Logo / Título */}
-          <div className="mb-10 text-center">
-            <img
-              src="/traumatic_logo.png"
-              alt="Traumatic"
-              className="h-64 mx-auto mb-4"
-            />
-            {/* <h1 className="text-3xl font-bold text-accent">Traumatic</h1>
-            <p className="text-sm text-gray-600 mt-1">Sistema de Gestión de Trámites Escolares</p> */}
+        <div className="mb-10 text-center">
+          <img
+            src="/traumatic_logo.png"
+            alt="Traumatic"
+            className="h-40 mx-auto mb-4"
+          />
+
+          <h1 className="text-xl font-semibold text-gray-800">
+            Iniciar sesión
+          </h1>
+
+          <p className="text-sm text-gray-500 mt-2">
+            Ingresa con tu cuenta institucional
+          </p>
+        </div>
+
+        <div className="space-y-4 flex flex-col items-center">
+
+          {/* Google */}
+          <div id="googleBtn" />
+
+          {/* Divider */}
+          <div className="flex items-center w-full gap-2">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400">o</span>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
 
-          {/* Formulario */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-text mb-1">
-                Correo electrónico
-              </label>
-              <input
-                type="email"
-                placeholder="ejemplo@uas.edu.mx"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-text mb-1">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition"
-            >
-              Iniciar sesión
-            </button>
-          </form>
+          {/* Microsoft */}
+          <button
+            onClick={handleMicrosoftLogin}
+            className="w-full flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-50 transition"
+          >
+            <FaMicrosoft className="text-lg" />
+            Continuar con Microsoft
+          </button>
 
         </div>
+
       </div>
-    </>
+    </div>
   )
 }

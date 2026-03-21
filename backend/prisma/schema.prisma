@@ -8,7 +8,168 @@ datasource db {
   provider = "postgresql"
 }
 
-model alumnos {
-  id   Int    @id @default(autoincrement())
-  name String
+model Usuario {
+  id                 BigInt   @id @default(autoincrement()) @map("id_usuario")
+  nombre             String
+  apellidos          String
+  correo             String   @unique
+  rol                Rol
+  activo             Boolean  @default(true)
+  fotoUrl            String?  @map("foto_url")
+
+  provider           Provider
+  providerId         String   @map("provider_id")
+
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tramites           Tramite[]
+  historialAcciones  HistorialTramite[]
+  documentos         Documento[]
+  notificaciones     Notificacion[]
+
+  @@map("usuario")
+}
+
+model Tramite {
+  idTramite            BigInt   @id @default(autoincrement()) @map("id_tramite")
+  folio                String   @unique
+
+  idUsuarioSolicitante BigInt   @map("id_usuario_solicitante")
+  idTipoTramite        BigInt   @map("id_tipo_tramite")
+
+  estado               EstadoTramite @default(ENVIADO)
+
+  comentariosAlumno    String?  @db.Text @map("comentarios_alumno")
+  motivoRechazo        String?  @db.Text @map("motivo_rechazo")
+
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  usuario              Usuario @relation(fields: [idUsuarioSolicitante], references: [id])
+  tipoTramite          TipoTramite @relation(fields: [idTipoTramite], references: [idTipo])
+
+  historial            HistorialTramite[]
+  documentos           Documento[]
+  notificaciones       Notificacion[]
+
+  @@map("tramite")
+}
+
+model TipoTramite {
+  idTipo          BigInt   @id @default(autoincrement()) @map("id_tipo")
+  nombre          String   @unique
+  descripcion     String?  @db.Text
+
+  docsRequeridos  Json?    @map("docs_requeridos")
+  activo          Boolean  @default(true)
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  tramites        Tramite[]
+  etapas          EtapaWorkflow[]
+
+  @@map("tipo_tramite")
+}
+
+model EtapaWorkflow {
+  idEtapa         BigInt   @id @default(autoincrement()) @map("id_etapa")
+  idTipoTramite   BigInt   @map("id_tipo_tramite")
+
+  nombreEtapa     String   @map("nombre_etapa")
+  orden           Int
+  rolResponsable  Rol      @map("rol_responsable")
+  esFinal         Boolean  @default(false) @map("es_final")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tipoTramite     TipoTramite @relation(fields: [idTipoTramite], references: [idTipo])
+
+  @@map("etapa_workflow")
+}
+
+model HistorialTramite {
+  idHistorial     BigInt   @id @default(autoincrement()) @map("id_historial")
+  idTramite       BigInt   @map("id_tramite")
+  idUsuarioAccion BigInt   @map("id_usuario_accion")
+
+  estadoAnterior  EstadoTramite?
+  estadoNuevo     EstadoTramite
+
+  comentario      String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tramite         Tramite @relation(fields: [idTramite], references: [idTramite])
+  usuario         Usuario @relation(fields: [idUsuarioAccion], references: [id])
+
+  @@map("historial_tramite")
+}
+
+model Documento {
+  idDocumento         BigInt   @id @default(autoincrement()) @map("id_documento")
+  idTramite           BigInt   @map("id_tramite")
+  idUsuarioSubio      BigInt   @map("id_usuario_subio")
+
+  nombreArchivo       String   @map("nombre_archivo")
+  rutaAlmacenamiento  String   @map("ruta_almacenamiento")
+  tipoMime            String   @map("tipo_mime")
+  tamanioBytes        Int      @map("tamanio_bytes")
+
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  tramite             Tramite @relation(fields: [idTramite], references: [idTramite])
+  usuario             Usuario @relation(fields: [idUsuarioSubio], references: [id])
+
+  @@map("documento")
+}
+
+model Notificacion {
+  idNotificacion  BigInt   @id @default(autoincrement()) @map("id_notificacion")
+  idTramite       BigInt   @map("id_tramite")
+  idUsuario       BigInt   @map("id_usuario")
+
+  tipoEvento      TipoEvento
+  asunto          String
+
+  estadoEnvio     EstadoEnvio @default(PENDIENTE)
+  intentos        Int @default(0)
+
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tramite         Tramite @relation(fields: [idTramite], references: [idTramite])
+  usuario         Usuario @relation(fields: [idUsuario], references: [id])
+
+  @@map("notificacion")
+}
+
+enum Rol {
+  ALUMNO
+  ADMINISTRATIVO
+  ADMIN
+}
+
+enum Provider {
+  GOOGLE
+  MICROSOFT
+}
+
+enum EstadoTramite {
+  ENVIADO
+  EN_REVISION
+  APROBADO
+  RECHAZADO
+  ENTREGADO
+}
+
+enum TipoEvento {
+  CREACION
+  CAMBIO_ESTADO
+  RECHAZO
+}
+
+enum EstadoEnvio {
+  PENDIENTE
+  ENVIADO
+  FALLIDO
 }

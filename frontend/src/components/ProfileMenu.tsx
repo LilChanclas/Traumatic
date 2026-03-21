@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { logout } from '@/lib/auth'
 
 interface Props {
   name: string
@@ -20,12 +21,13 @@ export default function ProfileMenu({ name, rol, iniciales }: Props) {
         setOpen(false)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  function handleLogout() {
+  async function handleLogout() {
     setOpen(false)
+    logout()
     toast.success('Sesión cerrada correctamente')
     setTimeout(() => navigate('/'), 1000)
   }
