@@ -15,7 +15,7 @@ import ReportesPage from '../pages/administrativo/ReportesPage'
 import BandejaEntradaPage from '../pages/administrativo/BandejaEntradaPage'
 
 import AdminDashboardPage from '../pages/admin/DashboardPage'
-
+import MicrosoftCallback from '@/pages/auth/MicrosoftCallback'
 
 function AppRouter() {
   return (
@@ -38,6 +38,8 @@ function AppRouter() {
         <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboardPage />} />
         </Route>
+        <Route path="/auth/microsoft/callback" element={<MicrosoftCallback />} />
+
       </Routes>
     </BrowserRouter>
   )

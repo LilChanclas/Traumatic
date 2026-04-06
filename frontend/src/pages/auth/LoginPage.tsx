@@ -103,7 +103,7 @@ export default function LoginPage() {
           {/* Microsoft */}
           <button
             onClick={handleMicrosoftLogin}
-            className="w-full flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-50 transition"
+            className="w-full flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-50 transition cursor-pointer"
           >
             <FaMicrosoft className="text-lg" />
             Continuar con Microsoft

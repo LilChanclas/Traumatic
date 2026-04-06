@@ -7,10 +7,16 @@ export class MicrosoftAuthStrategy {
   private msalClient: ConfidentialClientApplication
 
   constructor(private config: ConfigService) {
+    const clientId = config.get<string>('MICROSOFT_CLIENT_ID')
+    const clientSecret = config.get<string>('MICROSOFT_CLIENT_SECRET')
+    
+    console.log('CLIENT_ID:', clientId)      
+    console.log('SECRET existe:', !!clientSecret)
+
     this.msalClient = new ConfidentialClientApplication({
       auth: {
-        clientId: config.get<string>('MICROSOFT_CLIENT_ID')!,
-        clientSecret: config.get<string>('MICROSOFT_CLIENT_SECRET')!,
+        clientId: clientId!,
+        clientSecret: clientSecret!,
         authority: `https://login.microsoftonline.com/common`,
       },
     })
