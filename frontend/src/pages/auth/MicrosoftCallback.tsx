@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { loginWithMicrosoft } from '@/lib/auth'
 
 export default function MicrosoftCallback() {
   const navigate = useNavigate()
+  const called = useRef(false)  
 
   useEffect(() => {
+    if (called.current) return  
+    called.current = true
+
     const params = new URLSearchParams(window.location.search)
     const code = params.get('code')
 
