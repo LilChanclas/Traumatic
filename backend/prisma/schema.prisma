@@ -9,16 +9,17 @@ datasource db {
 }
 
 model Usuario {
-  id                 BigInt   @id @default(autoincrement()) @map("id_usuario")
-  nombre             String
-  apellidos          String
-  correo             String   @unique
-  rol                Rol
-  activo             Boolean  @default(true)
-  fotoUrl            String?  @map("foto_url")
+  id                    BigInt   @id @default(autoincrement()) @map("id_usuario")
+  nombre                String
+  apellidos             String
+  correo                String   @unique
+  rol                   Rol
+  activo                Boolean  @default(true)
+  pendienteAprobacion   Boolean  @default(false) @map("pendiente_aprobacion")
+  fotoUrl               String?  @map("foto_url")
 
-  provider           Provider
-  providerId         String   @map("provider_id")
+  provider           Provider?
+  providerId         String?  @map("provider_id")
 
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
@@ -152,6 +153,7 @@ enum Rol {
 enum Provider {
   GOOGLE
   MICROSOFT
+  MANUAL
 }
 
 enum EstadoTramite {
