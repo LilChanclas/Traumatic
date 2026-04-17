@@ -25,6 +25,7 @@ import BandejaEntradaPage from '../pages/administrativo/BandejaEntradaPage'
 // Admin pages
 import AdminDashboardPage from '../pages/admin/DashboardPage'
 import UsuariosPage from '../pages/admin/UsuariosPage'
+import TiposTramitePage from '../pages/admin/TiposTramitePage'
 
 function AppRouter() {
   return (
@@ -59,6 +60,7 @@ function AppRouter() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="usuarios" element={<UsuariosPage />} />
+          <Route path="tramites" element={<TiposTramitePage />} />
         </Route>
 
         {/* Fallback */}
