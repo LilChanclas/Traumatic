@@ -13,6 +13,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 import { Roles } from '../auth/decorators/roles.decorator'
 import { UsuariosService } from '../usuarios/usuarios.service'
+import { AdministrativoService } from '../administrativo/administrativo.service'
 import { Rol, Provider } from 'generated/prisma/enums'
 
 function serializeUser(user: any) {
@@ -33,7 +34,28 @@ function serializeUser(user: any) {
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
 export class AdminController {
-  constructor(private usuariosService: UsuariosService) {}
+  constructor(
+    private usuariosService: UsuariosService,
+    private administrativoService: AdministrativoService,
+  ) {}
+
+  @Get('tramites')
+  async getTramites(@Query('estado') estado?: string) {
+    const tramites = await this.administrativoService.findAll(estado)
+    return tramites.map((t: any) => ({
+      idTramite: t.idTramite.toString(),
+      folio: t.folio,
+      estado: t.estado,
+      createdAt: t.createdAt,
+      tipoTramite: t.tipoTramite ? { nombre: t.tipoTramite.nombre } : null,
+      usuario: t.usuario ? {
+        id: t.usuario.id.toString(),
+        nombre: t.usuario.nombre,
+        apellidos: t.usuario.apellidos,
+        correo: t.usuario.correo,
+      } : null,
+    }))
+  }
 
   // GET /admin/usuarios?rol=ADMINISTRATIVO&pendiente=true
   @Get('usuarios')

@@ -1,109 +1,108 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
+import { FiChevronDown, FiCheck, FiUpload, FiX, FiFileText } from 'react-icons/fi'
 import DashboardCard from '../../components/DashboardCard'
-import { FiChevronDown, FiCheck } from 'react-icons/fi'
+import { apiFetch } from '@/lib/api'
 
-// Definición de trámites con sus campos y documentos
-const TRAMITES = [
-  {
-    id: 'constancia',
-    label: 'Constancia de estudios',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'motivo', label: 'Motivo', tipo: 'textarea', placeholder: 'Describe el motivo de tu solicitud' },
-    ],
-    documentos: ['Comprobante de pago'],
-  },
-  {
-    id: 'historial',
-    label: 'Historial académico',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'motivo', label: 'Motivo', tipo: 'textarea', placeholder: 'Describe el motivo de tu solicitud' },
-    ],
-    documentos: [],
-  },
-  {
-    id: 'cartaPasante',
-    label: 'Carta de pasante',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'fechaEgreso', label: 'Fecha de egreso', tipo: 'date', placeholder: '' },
-      { id: 'motivo', label: 'Motivo', tipo: 'textarea', placeholder: 'Describe el motivo de tu solicitud' },
-    ],
-    documentos: [],
-  },
-  {
-    id: 'certificado',
-    label: 'Certificado de terminación',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'fechaEgreso', label: 'Fecha de egreso', tipo: 'date', placeholder: '' },
-    ],
-    documentos: [],
-  },
-  {
-    id: 'bajaTemporal',
-    label: 'Baja temporal',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'semestreActual', label: 'Semestre actual', tipo: 'text', placeholder: 'Ej. 5to' },
-      { id: 'motivo', label: 'Motivo', tipo: 'textarea', placeholder: 'Describe el motivo de tu solicitud' },
-    ],
-    documentos: [],
-  },
-  {
-    id: 'cambioCarrera',
-    label: 'Cambio de carrera',
-    campos: [
-      { id: 'numeroCuenta', label: 'Número de cuenta', tipo: 'text', placeholder: '12345678' },
-      { id: 'carreraActual', label: 'Carrera actual', tipo: 'text', placeholder: 'Ej. Ingeniería en Software' },
-      { id: 'carreraDestino', label: 'Carrera destino', tipo: 'text', placeholder: 'Ej. Ingeniería Civil' },
-      { id: 'motivo', label: 'Motivo', tipo: 'textarea', placeholder: 'Describe el motivo de tu solicitud' },
-    ],
-    documentos: [],
-  },
-]
+interface TipoTramite {
+  idTipo: string
+  nombre: string
+  descripcion: string | null
+  docsRequeridos: string[]
+}
 
-const PASOS = ['Tipo', 'Datos', 'Documentos', 'Confirmar']
+const PASOS = ['Tipo', 'Detalles', 'Documentos', 'Confirmar']
 
-const inputClass = `
-  w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface text-text text-sm
-  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-  transition placeholder-gray-300
-`
+const inputClass =
+  'w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-surface text-text text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-gray-300'
 
 export default function SolicitarPage() {
+  const navigate = useNavigate()
+  const [tipos, setTipos] = useState<TipoTramite[]>([])
+  const [loadingTipos, setLoadingTipos] = useState(true)
   const [pasoActual, setPasoActual] = useState(0)
-  const [tramiteId, setTramiteId] = useState('')
-  const [formData, setFormData] = useState<Record<string, string>>({})
-  const [archivos, setArchivos] = useState<File[]>([])
+  const [tipoSeleccionado, setTipoSeleccionado] = useState<TipoTramite | null>(null)
   const [open, setOpen] = useState(false)
+  const [comentarios, setComentarios] = useState('')
+  const [archivos, setArchivos] = useState<Record<string, File>>({})
+  const [enviando, setEnviando] = useState(false)
 
-  const tramiteSeleccionado = TRAMITES.find((t) => t.id === tramiteId)
+  useEffect(() => {
+    apiFetch('/tipos-tramite')
+      .then(r => r.json())
+      .then((data: TipoTramite[]) => setTipos(data))
+      .catch(() => toast.error('Error al cargar tipos de trámite'))
+      .finally(() => setLoadingTipos(false))
+  }, [])
+
+  const tieneDocumentos = (tipoSeleccionado?.docsRequeridos.length ?? 0) > 0
 
   function handleSiguiente() {
-    if (pasoActual === 0 && !tramiteId) return
-    if (pasoActual === 1 && tramiteSeleccionado?.documentos.length === 0) {
+    if (pasoActual === 0 && !tipoSeleccionado) return
+    if (pasoActual === 1 && !tieneDocumentos) {
       setPasoActual(3)
       return
     }
-    setPasoActual((p) => p + 1)
+    setPasoActual(p => p + 1)
   }
 
   function handleAtras() {
-    if (pasoActual === 3 && tramiteSeleccionado?.documentos.length === 0) {
+    if (pasoActual === 3 && !tieneDocumentos) {
       setPasoActual(1)
       return
     }
-    setPasoActual((p) => p - 1)
+    setPasoActual(p => p - 1)
   }
 
-  function handleCampo(id: string, valor: string) {
-    setFormData((prev) => ({ ...prev, [id]: valor }))
+  function handleArchivo(docNombre: string, file: File | null) {
+    if (file) {
+      setArchivos(prev => ({ ...prev, [docNombre]: file }))
+    } else {
+      setArchivos(prev => {
+        const next = { ...prev }
+        delete next[docNombre]
+        return next
+      })
+    }
   }
 
-  function handleSubmit() {
-    console.log('Solicitud enviada:', { tramiteId, formData, archivos })
+  async function handleSubmit() {
+    if (!tipoSeleccionado) return
+    setEnviando(true)
+    try {
+      // 1. Crear el trámite
+      const res = await apiFetch('/tramites', {
+        method: 'POST',
+        body: JSON.stringify({
+          idTipoTramite: tipoSeleccionado.idTipo,
+          comentariosAlumno: comentarios.trim() || undefined,
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.message ?? 'Error al crear el trámite')
+      }
+      const tramite = await res.json()
+
+      // 2. Subir cada documento
+      for (const docNombre of tipoSeleccionado.docsRequeridos) {
+        const file = archivos[docNombre]
+        if (!file) continue
+        const form = new FormData()
+        form.append('file', file)
+        form.append('idTramite', tramite.idTramite)
+        const uploadRes = await apiFetch('/documentos/upload', { method: 'POST', body: form })
+        if (!uploadRes.ok) throw new Error(`Error al subir: ${docNombre}`)
+      }
+
+      toast.success(`Trámite enviado — Folio: ${tramite.folio}`)
+      navigate('/alumno/tramites')
+    } catch (e: any) {
+      toast.error(e.message || 'Error al enviar el trámite')
+    } finally {
+      setEnviando(false)
+    }
   }
 
   return (
@@ -116,11 +115,9 @@ export default function SolicitarPage() {
           <div key={paso} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center">
               <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
-                i < pasoActual
-                  ? 'bg-primary text-white'
-                  : i === pasoActual
-                    ? 'bg-primary text-white ring-4 ring-primary/15'
-                    : 'bg-gray-100 text-gray-400'
+                i < pasoActual ? 'bg-primary text-white'
+                : i === pasoActual ? 'bg-primary text-white ring-4 ring-primary/15'
+                : 'bg-gray-100 text-gray-400'
               }`}>
                 {i < pasoActual ? <FiCheck size={14} strokeWidth={3} /> : i + 1}
               </div>
@@ -144,152 +141,175 @@ export default function SolicitarPage() {
         {/* Paso 1 — Elegir tipo */}
         {pasoActual === 0 && (
           <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-text mb-1.5">
-                Tipo de trámite
-              </label>
+            {loadingTipos ? (
+              <p className="text-sm text-gray-400">Cargando tipos de trámite...</p>
+            ) : tipos.length === 0 ? (
+              <p className="text-sm text-gray-400">No hay tipos de trámite disponibles en este momento.</p>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-text mb-1.5">Tipo de trámite</label>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpen(o => !o)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/70 backdrop-blur border border-gray-200 text-sm text-gray-700 hover:border-gray-300 transition"
+                  >
+                    <span className={tipoSeleccionado ? 'text-gray-800' : 'text-gray-400'}>
+                      {tipoSeleccionado?.nombre || 'Selecciona un trámite...'}
+                    </span>
+                    <FiChevronDown className={`transition ${open ? 'rotate-180' : ''}`} size={16} />
+                  </button>
 
-              {/* Select personalizado */}
-              <div className="relative">
-                <button
-                  onClick={() => setOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/70 backdrop-blur border border-gray-200 text-sm text-gray-700 hover:border-gray-300 transition"
-                >
-                  <span className={tramiteId ? 'text-gray-800' : 'text-gray-400'}>
-                    {tramiteSeleccionado?.label || 'Selecciona un trámite...'}
-                  </span>
+                  {open && (
+                    <div className="absolute mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
+                      {tipos.map(t => (
+                        <button
+                          key={t.idTipo}
+                          onClick={() => { setTipoSeleccionado(t); setOpen(false) }}
+                          className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition flex items-start justify-between gap-3 ${
+                            tipoSeleccionado?.idTipo === t.idTipo ? 'bg-primary/5 text-primary' : 'text-gray-700'
+                          }`}
+                        >
+                          <div>
+                            <p className="font-medium">{t.nombre}</p>
+                            {t.descripcion && <p className="text-xs text-gray-400 mt-0.5">{t.descripcion}</p>}
+                          </div>
+                          {tipoSeleccionado?.idTipo === t.idTipo && <FiCheck size={14} className="shrink-0 mt-0.5" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-                  <FiChevronDown
-                    className={`transition ${open ? 'rotate-180' : ''}`}
-                    size={16}
-                  />
-                </button>
-
-                {open && (
-                  <div className="absolute mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
-
-                    {TRAMITES.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => {
-                          setTramiteId(t.id)
-                          setOpen(false)
-                        }}
-                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition flex items-center justify-between ${
-                          tramiteId === t.id ? 'bg-primary/5 text-primary' : 'text-gray-700'
-                        }`}
-                      >
-                        {t.label}
-
-                        {tramiteId === t.id && (
-                          <FiCheck size={14} />
-                        )}
-                      </button>
-                    ))}
-
+                {tipoSeleccionado && tipoSeleccionado.docsRequeridos.length > 0 && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-xs font-medium text-blue-700 mb-1.5">Documentos requeridos:</p>
+                    <ul className="space-y-1">
+                      {tipoSeleccionado.docsRequeridos.map(d => (
+                        <li key={d} className="flex items-center gap-1.5 text-xs text-blue-600">
+                          <FiFileText size={11} /> {d}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
-            </div>
-
-
+            )}
           </div>
         )}
 
-        {/* Paso 2 — Datos del formulario */}
-        {pasoActual === 1 && tramiteSeleccionado && (
+        {/* Paso 2 — Detalles / comentarios */}
+        {pasoActual === 1 && tipoSeleccionado && (
           <div className="space-y-4">
-            {tramiteSeleccionado.campos.map((campo) => (
-              <div key={campo.id}>
-                <label className="block text-sm font-medium text-text mb-1.5">
-                  {campo.label}
-                </label>
-                {campo.tipo === 'textarea' ? (
-                  <textarea
-                    rows={3}
-                    placeholder={campo.placeholder}
-                    value={formData[campo.id] || ''}
-                    onChange={(e) => handleCampo(campo.id, e.target.value)}
-                    className={`${inputClass} resize-none`}
-                  />
-                ) : (
-                  <input
-                    type={campo.tipo}
-                    placeholder={campo.placeholder}
-                    value={formData[campo.id] || ''}
-                    onChange={(e) => handleCampo(campo.id, e.target.value)}
-                    className={inputClass}
-                  />
-                )}
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-text mb-1.5">
+                Comentarios u observaciones <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <textarea
+                rows={4}
+                placeholder="Describe el motivo de tu solicitud, agrega observaciones relevantes..."
+                value={comentarios}
+                onChange={e => setComentarios(e.target.value)}
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+            <p className="text-xs text-gray-400">
+              Trámite: <span className="font-medium text-gray-600">{tipoSeleccionado.nombre}</span>
+            </p>
           </div>
         )}
 
         {/* Paso 3 — Documentos */}
-        {pasoActual === 2 && tramiteSeleccionado && (
+        {pasoActual === 2 && tipoSeleccionado && (
           <div className="space-y-5">
-            {tramiteSeleccionado.documentos.map((doc) => (
-              <div key={doc}>
-                <label className="block text-sm font-medium text-text mb-1.5">
-                  {doc}
-                </label>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-surface hover:border-primary/40 hover:bg-primary/5 transition group">
-                  <div className="flex flex-col items-center gap-1 text-gray-400 group-hover:text-primary transition">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    <span className="text-sm font-medium">
-                      {archivos.length > 0 ? archivos[0].name : 'Haz clic o arrastra el archivo aquí'}
-                    </span>
-                    <span className="text-xs">PDF o imagen, máx. 5MB</span>
-                  </div>
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) setArchivos([e.target.files[0]])
-                    }}
-                  />
-                </label>
-              </div>
-            ))}
+            {tipoSeleccionado.docsRequeridos.map(doc => {
+              const archivo = archivos[doc]
+              return (
+                <div key={doc}>
+                  <label className="block text-sm font-medium text-text mb-1.5">{doc}</label>
+                  {archivo ? (
+                    <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-xl">
+                      <FiFileText size={16} className="text-green-600 shrink-0" />
+                      <span className="text-sm text-green-700 flex-1 truncate">{archivo.name}</span>
+                      <button
+                        onClick={() => handleArchivo(doc, null)}
+                        className="text-green-500 hover:text-red-500 transition"
+                      >
+                        <FiX size={15} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-surface hover:border-primary/40 hover:bg-primary/5 transition group">
+                      <div className="flex flex-col items-center gap-1 text-gray-400 group-hover:text-primary transition">
+                        <FiUpload size={20} />
+                        <span className="text-sm font-medium">Haz clic o arrastra el archivo aquí</span>
+                        <span className="text-xs">PDF o imagen, máx. 10MB</span>
+                      </div>
+                      <input
+                        type="file"
+                        accept=".pdf,image/*"
+                        className="hidden"
+                        onChange={e => {
+                          if (e.target.files?.[0]) handleArchivo(doc, e.target.files[0])
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 
         {/* Paso 4 — Confirmar */}
-        {pasoActual === 3 && tramiteSeleccionado && (
+        {pasoActual === 3 && tipoSeleccionado && (
           <div className="space-y-3">
             <div className="bg-surface rounded-xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
               <div className="flex justify-between px-4 py-3">
                 <span className="text-sm text-gray-500">Tipo de trámite</span>
-                <span className="text-sm font-medium text-text">{tramiteSeleccionado.label}</span>
+                <span className="text-sm font-medium text-text">{tipoSeleccionado.nombre}</span>
               </div>
-              {tramiteSeleccionado.campos.map((campo) => (
-                <div key={campo.id} className="flex justify-between px-4 py-3">
-                  <span className="text-sm text-gray-500">{campo.label}</span>
-                  <span className="text-sm font-medium text-text text-right max-w-[60%] truncate">
-                    {formData[campo.id] || '—'}
-                  </span>
-                </div>
-              ))}
-              {archivos.length > 0 && (
-                <div className="flex justify-between px-4 py-3">
-                  <span className="text-sm text-gray-500">Documento adjunto</span>
-                  <span className="text-sm font-medium text-text truncate max-w-[60%]">{archivos[0].name}</span>
+              <div className="flex justify-between px-4 py-3">
+                <span className="text-sm text-gray-500">Comentarios</span>
+                <span className="text-sm font-medium text-text text-right max-w-[60%]">
+                  {comentarios.trim() || <span className="text-gray-400">Sin comentarios</span>}
+                </span>
+              </div>
+              {tipoSeleccionado.docsRequeridos.length > 0 && (
+                <div className="px-4 py-3">
+                  <p className="text-sm text-gray-500 mb-2">Documentos adjuntos</p>
+                  <div className="space-y-1.5">
+                    {tipoSeleccionado.docsRequeridos.map(doc => (
+                      <div key={doc} className="flex items-center gap-2">
+                        {archivos[doc] ? (
+                          <FiCheck size={13} className="text-green-500 shrink-0" />
+                        ) : (
+                          <FiX size={13} className="text-red-400 shrink-0" />
+                        )}
+                        <span className={`text-xs ${archivos[doc] ? 'text-gray-700' : 'text-red-400'}`}>
+                          {doc}{archivos[doc] ? ` — ${archivos[doc].name}` : ' — Pendiente'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
+
+            {tipoSeleccionado.docsRequeridos.some(d => !archivos[d]) && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
+                Algunos documentos requeridos no han sido adjuntados. Puedes enviar la solicitud igualmente, pero podría ser rechazada.
+              </div>
+            )}
           </div>
         )}
 
-        {/* Botones de navegación */}
+        {/* Navegación */}
         <div className={`flex mt-8 pt-5 border-t border-gray-100 ${pasoActual > 0 ? 'justify-between' : 'justify-end'}`}>
           {pasoActual > 0 && (
             <button
               onClick={handleAtras}
-              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-text hover:bg-surface transition"
+              disabled={enviando}
+              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-text hover:bg-surface transition disabled:opacity-40"
             >
               ← Atrás
             </button>
@@ -298,21 +318,21 @@ export default function SolicitarPage() {
           {pasoActual < 3 ? (
             <button
               onClick={handleSiguiente}
-              disabled={pasoActual === 0 && !tramiteId}
-              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={(pasoActual === 0 && !tipoSeleccionado) || loadingTipos}
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Siguiente →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition"
+              disabled={enviando}
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-medium transition disabled:opacity-50"
             >
-              Enviar solicitud
+              {enviando ? 'Enviando...' : 'Enviar solicitud'}
             </button>
           )}
         </div>
-
       </DashboardCard>
     </div>
   )

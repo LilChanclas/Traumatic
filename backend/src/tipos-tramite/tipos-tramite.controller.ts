@@ -4,6 +4,27 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 import { Roles } from '../auth/decorators/roles.decorator'
 
+// Endpoint público para cualquier usuario autenticado — devuelve solo tipos activos
+@Controller('tipos-tramite')
+@UseGuards(JwtAuthGuard)
+export class TiposTramitePublicoController {
+  constructor(private readonly service: TiposTramiteService) {}
+
+  @Get()
+  async findActivos() {
+    const tipos = await this.service.findAll()
+    return tipos
+      .filter(t => t.activo)
+      .map(t => ({
+        idTipo: t.idTipo.toString(),
+        nombre: t.nombre,
+        descripcion: t.descripcion ?? null,
+        docsRequeridos: (t.docsRequeridos as string[]) ?? [],
+        activo: t.activo,
+      }))
+  }
+}
+
 function serialize(t: any) {
   return {
     idTipo: t.idTipo.toString(),

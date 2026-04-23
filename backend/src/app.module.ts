@@ -8,6 +8,8 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { AdminModule } from './admin/admin.module';
 import { DocumentosModule } from './documentos/documentos.module';
 import { TiposTramiteModule } from './tipos-tramite/tipos-tramite.module';
+import { TramitesModule } from './tramites/tramites.module';
+import { AdministrativoModule } from './administrativo/administrativo.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { TiposTramiteModule } from './tipos-tramite/tipos-tramite.module';
     AdminModule,
     DocumentosModule,
     TiposTramiteModule,
+    TramitesModule,
+    AdministrativoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
