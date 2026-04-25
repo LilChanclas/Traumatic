@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Query, UseGuards, ParseIntPipe, DefaultValuePipe } from '@nestjs/common'
 import { AdministrativoService } from './administrativo.service'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
@@ -60,9 +60,19 @@ export class AdministrativoController {
   constructor(private readonly service: AdministrativoService) {}
 
   @Get()
-  async findAll(@Query('estado') estado?: string) {
-    const tramites = await this.service.findAll(estado)
-    return tramites.map(serializeTramite)
+  async findAll(
+    @Query('estado') estado?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('pageSize', new DefaultValuePipe(20), ParseIntPipe) pageSize?: number,
+  ) {
+    const result = await this.service.findAll(estado, page, pageSize)
+    return {
+      data:       result.data.map(serializeTramite),
+      total:      result.total,
+      page:       result.page,
+      pageSize:   result.pageSize,
+      totalPages: result.totalPages,
+    }
   }
 
   @Get(':id')

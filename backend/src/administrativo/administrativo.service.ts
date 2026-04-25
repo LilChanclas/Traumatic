@@ -12,20 +12,30 @@ const TRANSICIONES_VALIDAS: Partial<Record<EstadoTramite, EstadoTramite[]>> = {
 export class AdministrativoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(estado?: string) {
-    return this.prisma.tramite.findMany({
-      where: estado ? { estado: estado as EstadoTramite } : undefined,
-      include: {
-        tipoTramite: true,
-        usuario: { select: { id: true, nombre: true, apellidos: true, correo: true, fotoUrl: true } },
-        documentos: true,
-        historial: {
-          include: { usuario: { select: { nombre: true, apellidos: true, rol: true } } },
-          orderBy: { createdAt: 'asc' },
+  async findAll(estado?: string, page = 1, pageSize = 20) {
+    const where = estado ? { estado: estado as EstadoTramite } : undefined
+    const skip  = (page - 1) * pageSize
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.tramite.findMany({
+        where,
+        skip,
+        take: pageSize,
+        include: {
+          tipoTramite: true,
+          usuario: { select: { id: true, nombre: true, apellidos: true, correo: true, fotoUrl: true } },
+          documentos: true,
+          historial: {
+            include: { usuario: { select: { nombre: true, apellidos: true, rol: true } } },
+            orderBy: { createdAt: 'asc' },
+          },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.tramite.count({ where }),
+    ])
+
+    return { data, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }
   }
 
   async findById(idTramite: bigint) {
