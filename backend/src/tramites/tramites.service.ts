@@ -48,7 +48,14 @@ export class TramitesService {
   async findMisTramites(idUsuario: bigint) {
     return this.prisma.tramite.findMany({
       where: { idUsuarioSolicitante: idUsuario },
-      include: { tipoTramite: true, documentos: true },
+      include: {
+        tipoTramite: true,
+        documentos: true,
+        historial: {
+          include: { usuario: { select: { nombre: true, apellidos: true, rol: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     })
   }

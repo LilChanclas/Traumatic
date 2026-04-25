@@ -168,13 +168,14 @@ export default function HistorialPage() {
                     )}
 
                     {/* Línea de tiempo del historial */}
+                    {(t.historial?.length ?? 0) > 0 && (
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-3">Historial de estados</p>
                       <div className="relative pl-5 space-y-4">
                         <div className="absolute left-1.5 top-1 bottom-1 w-px bg-gray-200" />
-                        {t.historial.map((h, idx) => (
+                        {(t.historial ?? []).map((h, idx) => (
                           <div key={h.idHistorial} className="relative">
-                            <div className={`absolute -left-4 top-1 w-2.5 h-2.5 rounded-full border-2 border-white ${idx === t.historial.length - 1 ? 'bg-primary' : 'bg-gray-300'}`} />
+                            <div className={`absolute -left-4 top-1 w-2.5 h-2.5 rounded-full border-2 border-white ${idx === (t.historial?.length ?? 0) - 1 ? 'bg-primary' : 'bg-gray-300'}`} />
                             <div className="bg-gray-50 rounded-xl px-4 py-3 space-y-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 {h.estadoAnterior && (
@@ -197,6 +198,7 @@ export default function HistorialPage() {
                         ))}
                       </div>
                     </div>
+                    )}
 
                   </div>
                 )}
