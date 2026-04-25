@@ -69,6 +69,14 @@ export default function SolicitarPage() {
 
   async function handleSubmit() {
     if (!tipoSeleccionado) return
+
+    // Validar que todos los documentos requeridos estén adjuntos
+    const faltantes = tipoSeleccionado.docsRequeridos.filter(d => !archivos[d])
+    if (faltantes.length > 0) {
+      toast.error(`Debes adjuntar: ${faltantes.join(', ')}`)
+      return
+    }
+
     setEnviando(true)
     try {
       // 1. Crear el trámite

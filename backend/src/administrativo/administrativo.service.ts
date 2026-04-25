@@ -19,6 +19,10 @@ export class AdministrativoService {
         tipoTramite: true,
         usuario: { select: { id: true, nombre: true, apellidos: true, correo: true, fotoUrl: true } },
         documentos: true,
+        historial: {
+          include: { usuario: { select: { nombre: true, apellidos: true, rol: true } } },
+          orderBy: { createdAt: 'asc' },
+        },
       },
       orderBy: { createdAt: 'desc' },
     })
