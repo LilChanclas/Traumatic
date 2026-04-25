@@ -87,24 +87,36 @@ function fmtFecha(iso: string) {
   return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
 }
 
-export default function BandejaEntradaPage() {
-  const [tramites, setTramites]       = useState<Tramite[]>([])
-  const [loading, setLoading]         = useState(true)
-  const [vista, setVista]             = useState<'lista' | 'kanban'>('kanban')
-  const [filterEstado, setFilterEstado] = useState('')
-  const [search, setSearch]           = useState('')
-  const [expandido, setExpandido]     = useState<string | null>(null)
-  const [accionModal, setAccionModal] = useState<{ tramite: Tramite; estado: EstadoTramite; label: string } | null>(null)
-  const [comentario, setComentario]   = useState('')
-  const [guardando, setGuardando]     = useState(false)
+const PAGE_SIZE = 15
 
-  async function fetchTramites() {
+export default function BandejaEntradaPage() {
+  const [tramites, setTramites]         = useState<Tramite[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [vista, setVista]               = useState<'lista' | 'kanban'>('kanban')
+  const [filterEstado, setFilterEstado] = useState('')
+  const [search, setSearch]             = useState('')
+  const [expandido, setExpandido]       = useState<string | null>(null)
+  const [accionModal, setAccionModal]   = useState<{ tramite: Tramite; estado: EstadoTramite; label: string } | null>(null)
+  const [comentario, setComentario]     = useState('')
+  const [guardando, setGuardando]       = useState(false)
+  const [page, setPage]                 = useState(1)
+  const [totalPages, setTotalPages]     = useState(1)
+  const [total, setTotal]               = useState(0)
+
+  async function fetchTramites(p = page) {
     setLoading(true)
     try {
-      const qs = filterEstado ? `?estado=${filterEstado}` : ''
-      const res = await apiFetch(`/administrativo/tramites${qs}`)
+      const params = new URLSearchParams()
+      if (filterEstado) params.set('estado', filterEstado)
+      // Kanban siempre carga todo (pageSize grande); lista pagina
+      params.set('page',     String(p))
+      params.set('pageSize', vista === 'kanban' ? '200' : String(PAGE_SIZE))
+      const res = await apiFetch(`/administrativo/tramites?${params}`)
       if (!res.ok) throw new Error()
-      setTramites(await res.json())
+      const json = await res.json()
+      setTramites(json.data)
+      setTotal(json.total)
+      setTotalPages(json.totalPages)
     } catch {
       toast.error('Error al cargar trámites')
     } finally {
@@ -112,7 +124,10 @@ export default function BandejaEntradaPage() {
     }
   }
 
-  useEffect(() => { fetchTramites() }, [filterEstado])
+  useEffect(() => {
+    setPage(1)
+    fetchTramites(1)
+  }, [filterEstado, vista])
 
   const filtered = tramites.filter(t => {
     if (!search) return true
@@ -147,7 +162,7 @@ export default function BandejaEntradaPage() {
       }
       toast.success(`Trámite → "${ESTADO_LABEL[accionModal.estado]}"`)
       setAccionModal(null)
-      fetchTramites()
+      fetchTramites(page)
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Error al actualizar')
     } finally {
@@ -454,6 +469,31 @@ export default function BandejaEntradaPage() {
               </div>
             )
           })}
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-500">
+                Página {page} de {totalPages} · {total} trámites
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setPage(p => p - 1); fetchTramites(page - 1) }}
+                  disabled={page === 1}
+                  className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                >
+                  ← Anterior
+                </button>
+                <button
+                  onClick={() => { setPage(p => p + 1); fetchTramites(page + 1) }}
+                  disabled={page === totalPages}
+                  className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

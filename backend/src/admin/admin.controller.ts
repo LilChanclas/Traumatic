@@ -41,8 +41,8 @@ export class AdminController {
 
   @Get('tramites')
   async getTramites(@Query('estado') estado?: string) {
-    const tramites = await this.administrativoService.findAll(estado)
-    return tramites.map((t: any) => ({
+    const result = await this.administrativoService.findAll(estado, 1, 1000)
+    return result.data.map((t: any) => ({
       idTramite: t.idTramite.toString(),
       folio: t.folio,
       estado: t.estado,

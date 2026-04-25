@@ -45,9 +45,10 @@ export default function ReportesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiFetch('/administrativo/tramites')
+    // Reportes necesita todos los registros para calcular estadísticas
+    apiFetch('/administrativo/tramites?pageSize=1000')
       .then(r => r.json())
-      .then(setTramites)
+      .then(json => setTramites(json.data ?? json))
       .catch(() => toast.error('Error al cargar reportes'))
       .finally(() => setLoading(false))
   }, [])
