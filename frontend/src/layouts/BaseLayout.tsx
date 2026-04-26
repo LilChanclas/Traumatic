@@ -7,7 +7,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import type { IconType } from 'react-icons'
 import { FiLogOut, FiMenu, FiX } from 'react-icons/fi'
 import ProfileMenu from '../components/ProfileMenu'
-import toast from 'react-hot-toast'
+import { toast } from "sonner";
 import { logout } from '@/lib/auth'
 
 interface NavItem {

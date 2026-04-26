@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { FiPlus, FiEdit2, FiSearch, FiToggleLeft, FiToggleRight, FiTrash2, FiFileText } from 'react-icons/fi'
 import { apiFetch } from '@/lib/api'
 
