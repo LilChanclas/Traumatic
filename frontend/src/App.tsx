@@ -1,29 +1,21 @@
 import AppRouter from './routes/AppRouter'
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from 'sonner'
 
 function App() {
   return (
     <>
       <Toaster
         position="top-right"
+        richColors
         toastOptions={{
           duration: 3000,
           style: {
+            zIndex: 9999,
             fontFamily: 'Roboto, sans-serif',
             fontSize: '13px',
-            background: '#fff',
-            color: '#1e293b',
             borderRadius: '10px',
-            borderLeft: '3px solid #22c55e',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-          },
-          success: {
-            style: { borderLeft: '3px solid #22c55e' },
-            iconTheme: { primary: '#16a34a', secondary: '#dcfce7' },
-          },
-          error: {
-            style: { borderLeft: '3px solid #ef4444' },
-            iconTheme: { primary: '#dc2626', secondary: '#fee2e2' },
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            border: '1px solid rgba(0,0,0,0.06)',
           },
         }}
       />

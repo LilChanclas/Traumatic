@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { FiChevronDown, FiCheck, FiUpload, FiX, FiFileText } from 'react-icons/fi'
 import DashboardCard from '../../components/DashboardCard'
 import { apiFetch } from '@/lib/api'

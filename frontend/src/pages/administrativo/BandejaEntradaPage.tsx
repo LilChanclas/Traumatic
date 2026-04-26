@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import {
   FiFileText, FiChevronDown, FiChevronUp, FiPaperclip,
   FiExternalLink, FiSearch, FiUser, FiList, FiGrid,

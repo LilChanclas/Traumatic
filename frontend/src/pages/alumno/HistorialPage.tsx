@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { FiFileText, FiChevronDown, FiChevronUp, FiPaperclip, FiExternalLink } from 'react-icons/fi'
 import { apiFetch } from '@/lib/api'
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import {
   FiPlus, FiCheck, FiX, FiEdit2, FiSearch, FiUserCheck, FiUserX, FiClock, FiUsers,
 } from 'react-icons/fi'
