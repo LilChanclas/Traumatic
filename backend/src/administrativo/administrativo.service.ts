@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { EmailService } from '../email/email.service'
 import { EstadoTramite } from 'generated/prisma/enums'
 
 const TRANSICIONES_VALIDAS: Partial<Record<EstadoTramite, EstadoTramite[]>> = {
@@ -10,7 +11,10 @@ const TRANSICIONES_VALIDAS: Partial<Record<EstadoTramite, EstadoTramite[]>> = {
 
 @Injectable()
 export class AdministrativoService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly email: EmailService,
+  ) {}
 
   async findAll(estado?: string, page = 1, pageSize = 20) {
     const where = estado ? { estado: estado as EstadoTramite } : undefined
@@ -98,6 +102,19 @@ export class AdministrativoService {
         },
       }),
     ])
+
+    // Correo de cambio de estado al alumno (sin bloquear la respuesta)
+    const usuario = (updated as any).usuario
+    if (usuario?.correo) {
+      this.email.enviarCambioEstado({
+        correo:      usuario.correo,
+        nombre:      `${usuario.nombre} ${usuario.apellidos}`,
+        folio:       updated.folio,
+        tipoNombre:  (updated as any).tipoTramite?.nombre ?? 'Trámite',
+        nuevoEstado,
+        comentario,
+      }).catch(() => { /* silencioso */ })
+    }
 
     return updated
   }

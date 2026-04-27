@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { EmailService } from '../email/email.service'
 
 @Injectable()
 export class TramitesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly email: EmailService,
+  ) {}
 
   private async generarFolio(): Promise<string> {
     const year = new Date().getFullYear()
@@ -41,6 +45,22 @@ export class TramitesService {
         comentario: 'Trámite enviado por el alumno',
       },
     })
+
+    // Correo de confirmación al alumno (sin bloquear la respuesta)
+    this.prisma.usuario.findUnique({ where: { id: idUsuario } })
+      .then(usuario => {
+        if (usuario?.correo) {
+          const fecha = new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
+          this.email.enviarConfirmacionTramite({
+            correo:    usuario.correo,
+            nombre:    `${usuario.nombre} ${usuario.apellidos}`,
+            folio,
+            tipoNombre: tipo.nombre,
+            fecha,
+          })
+        }
+      })
+      .catch(() => { /* silencioso — el email no debe interrumpir el flujo */ })
 
     return tramite
   }
