@@ -40,9 +40,9 @@ export default function AdministrativoDashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiFetch('/administrativo/tramites')
+    apiFetch('/administrativo/tramites?pageSize=50')
       .then(r => r.json())
-      .then(setTramites)
+      .then(json => setTramites(json.data ?? json))
       .finally(() => setLoading(false))
   }, [])
 
