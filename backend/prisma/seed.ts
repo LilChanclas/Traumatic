@@ -34,12 +34,12 @@ async function main() {
     },
   })
 
-  console.log(`✅ Admin creado:`)
+  console.log(`   Admin creado:`)
   console.log(`   Nombre : ${admin.nombre} ${admin.apellidos}`)
   console.log(`   Correo : ${admin.correo}`)
   console.log(`   Rol    : ${admin.rol}`)
   console.log()
-  console.log('→ Para iniciar sesión, usa Google o Microsoft con la cuenta:')
+  console.log('Para iniciar sesión, usa Google o Microsoft con la cuenta:')
   console.log(`  ${ADMIN_CORREO}`)
 }
 

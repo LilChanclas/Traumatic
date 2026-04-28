@@ -482,14 +482,14 @@ export default function BandejaEntradaPage() {
                   disabled={page === 1}
                   className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
                 >
-                  ← Anterior
+                  Anterior
                 </button>
                 <button
                   onClick={() => { setPage(p => p + 1); fetchTramites(page + 1) }}
                   disabled={page === totalPages}
                   className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
                 >
-                  Siguiente →
+                  Siguiente
                 </button>
               </div>
             </div>
