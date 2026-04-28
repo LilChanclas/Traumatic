@@ -108,9 +108,6 @@ export default function BaseLayout({ navItems, user }: Props) {
 
                 <span className="flex-1">Cerrar sesión</span>
 
-                <span className="text-[10px] opacity-0 group-hover:opacity-100 transition">
-                →
-                </span>
             </button>
             </div>
         </div>

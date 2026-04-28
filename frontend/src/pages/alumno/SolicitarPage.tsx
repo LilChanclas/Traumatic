@@ -319,7 +319,7 @@ export default function SolicitarPage() {
               disabled={enviando}
               className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-text hover:bg-surface transition disabled:opacity-40"
             >
-              ← Atrás
+              Atrás
             </button>
           )}
 
@@ -329,7 +329,7 @@ export default function SolicitarPage() {
               disabled={(pasoActual === 0 && !tipoSeleccionado) || loadingTipos}
               className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Siguiente →
+              Siguiente
             </button>
           ) : (
             <button
