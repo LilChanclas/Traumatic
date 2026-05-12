@@ -24,10 +24,12 @@ model Usuario {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  tramites           Tramite[]
-  historialAcciones  HistorialTramite[]
-  documentos         Documento[]
-  notificaciones     Notificacion[]
+  tramites             Tramite[]
+  historialAcciones    HistorialTramite[]
+  documentos           Documento[]
+  notificaciones       Notificacion[]
+  alertasEnviadas      Alerta[]           @relation("alertasAlumno")
+  alertasRespondidas   Alerta[]           @relation("alertasAdmin")
 
   @@map("usuario")
 }
@@ -53,6 +55,7 @@ model Tramite {
   historial            HistorialTramite[]
   documentos           Documento[]
   notificaciones       Notificacion[]
+  alertas              Alerta[]
 
   @@map("tramite")
 }
@@ -174,4 +177,34 @@ enum EstadoEnvio {
   PENDIENTE
   ENVIADO
   FALLIDO
+}
+
+model Alerta {
+  idAlerta         BigInt       @id @default(autoincrement()) @map("id_alerta")
+  idAlumno         BigInt       @map("id_alumno")
+  idTramite        BigInt?      @map("id_tramite")
+
+  asunto           String
+  descripcion      String       @db.Text
+
+  estado           EstadoAlerta @default(PENDIENTE)
+
+  respuesta        String?      @db.Text
+  idAdminResponde  BigInt?      @map("id_admin_responde")
+  respondidaAt     DateTime?    @map("respondida_at")
+
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  alumno           Usuario      @relation("alertasAlumno", fields: [idAlumno], references: [id])
+  tramite          Tramite?     @relation(fields: [idTramite], references: [idTramite])
+  adminResponde    Usuario?     @relation("alertasAdmin", fields: [idAdminResponde], references: [id])
+
+  @@map("alerta")
+}
+
+enum EstadoAlerta {
+  PENDIENTE
+  VISTA
+  RESPONDIDA
 }

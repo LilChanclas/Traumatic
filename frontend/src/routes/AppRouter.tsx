@@ -16,11 +16,13 @@ import AlumnoDashboardPage from '../pages/alumno/DashboardPage'
 import TramitesPage from '../pages/alumno/TramitesPage'
 import SolicitarPage from '../pages/alumno/SolicitarPage'
 import HistorialPage from '../pages/alumno/HistorialPage'
+import AlumnoAlertasPage from '../pages/alumno/AlertasPage'
 
 // Administrativo pages
 import AdministrativoDashboardPage from '../pages/administrativo/DashboardPage'
 import ReportesPage from '../pages/administrativo/ReportesPage'
 import BandejaEntradaPage from '../pages/administrativo/BandejaEntradaPage'
+import AdministrativoAlertasPage from '../pages/administrativo/AlertasPage'
 
 // Admin pages
 import AdminDashboardPage from '../pages/admin/DashboardPage'
@@ -45,6 +47,7 @@ function AppRouter() {
           <Route path="solicitar" element={<SolicitarPage />} />
           <Route path="tramites" element={<TramitesPage />} />
           <Route path="historial" element={<HistorialPage />} />
+          <Route path="alertas" element={<AlumnoAlertasPage />} />
         </Route>
 
         {/* ── Administrativo (protegido por AdministrativoLayout) */}
@@ -52,6 +55,7 @@ function AppRouter() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdministrativoDashboardPage />} />
           <Route path="bandeja-de-entrada" element={<BandejaEntradaPage />} />
+          <Route path="alertas" element={<AdministrativoAlertasPage />} />
           <Route path="reportes" element={<ReportesPage />} />
         </Route>
 

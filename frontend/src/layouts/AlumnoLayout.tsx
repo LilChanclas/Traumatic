@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { GoHistory } from 'react-icons/go'
-import { FiFileText, FiClipboard, FiHome } from 'react-icons/fi'
+import { FiFileText, FiClipboard, FiHome, FiBell } from 'react-icons/fi'
 import BaseLayout from './BaseLayout'
 import { getToken } from '@/lib/api'
 import { getStoredUser as getUser } from '@/lib/auth'
@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Solicitar Trámite', icon: FiFileText, path: '/alumno/solicitar' },
   { label: 'Mis Trámites', icon: FiClipboard, path: '/alumno/tramites' },
   { label: 'Historial', icon: GoHistory, path: '/alumno/historial' },
+  { label: 'Alertas', icon: FiBell, path: '/alumno/alertas' },
 ]
 
 export default function AlumnoLayout() {

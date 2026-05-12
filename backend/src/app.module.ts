@@ -10,6 +10,7 @@ import { DocumentosModule } from './documentos/documentos.module';
 import { TiposTramiteModule } from './tipos-tramite/tipos-tramite.module';
 import { TramitesModule } from './tramites/tramites.module';
 import { AdministrativoModule } from './administrativo/administrativo.module';
+import { AlertasModule } from './alertas/alertas.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AdministrativoModule } from './administrativo/administrativo.module';
     TiposTramiteModule,
     TramitesModule,
     AdministrativoModule,
+    AlertasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

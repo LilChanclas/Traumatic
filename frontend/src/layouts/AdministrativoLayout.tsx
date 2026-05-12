@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { FiInbox, FiClipboard, FiBarChart2 } from 'react-icons/fi'
+import { FiInbox, FiClipboard, FiBarChart2, FiBell } from 'react-icons/fi'
 import BaseLayout from './BaseLayout'
 import { getToken } from '@/lib/api'
 import { getStoredUser } from '@/lib/auth'
@@ -7,6 +7,7 @@ import { getStoredUser } from '@/lib/auth'
 const navItems = [
   { label: 'Dashboard', icon: FiInbox, path: '/administrativo/dashboard' },
   { label: 'Bandeja de entrada', icon: FiClipboard, path: '/administrativo/bandeja-de-entrada' },
+  { label: 'Alertas', icon: FiBell, path: '/administrativo/alertas' },
   { label: 'Reportes', icon: FiBarChart2, path: '/administrativo/reportes' },
 ]
 
